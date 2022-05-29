@@ -3,8 +3,8 @@ import IC "./ic";
 import List "mo:base/List";
 import Principal "mo:base/Principal";
 import Iter "mo:base/Iter";
+import Array "mo:base/Array";
 import Cycles "mo:base/ExperimentalCycles";
-
 actor class(m : Nat, n : Nat ,init_members:[Principal]) = self {
   private let CYCLE_LIMIT = 2_000_000_000;
   let ic : IC.Self = actor("aaaaa-aa");
@@ -100,7 +100,7 @@ actor class(m : Nat, n : Nat ,init_members:[Principal]) = self {
   };
 
   public func delete_canister (_canister_id : IC.canister_id) {
-    assert(current_propose==#create and approved==true);
+    assert(current_propose==#delete and approved==true);
     await ic.delete_canister({ canister_id = _canister_id });
     reset();
   };
