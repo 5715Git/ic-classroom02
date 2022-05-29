@@ -3,8 +3,10 @@ import IC "./ic";
 import List "mo:base/List";
 import Principal "mo:base/Principal";
 import Iter "mo:base/Iter";
+import Cycles "mo:base/ExperimentalCycles";
 
 actor class(m : Nat, n : Nat ,init_members:[Principal]) = self {
+  private let CYCLE_LIMIT = 2_000_000_000;
   let ic : IC.Self = actor("aaaaa-aa");
   public type ProposeType = {
     #zero;
@@ -67,6 +69,7 @@ actor class(m : Nat, n : Nat ,init_members:[Principal]) = self {
       memory_allocation = null;
       compute_allocation = null;
     };
+    Cycles.add(CYCLE_LIMIT);
     let result = await ic.create_canister({ settings = ?settings;});
     result.canister_id
     
@@ -101,4 +104,13 @@ actor class(m : Nat, n : Nat ,init_members:[Principal]) = self {
     await ic.delete_canister({ canister_id = _canister_id });
     reset();
   };
+
+  public query({caller}) func cycleBalance(): async Nat{
+    Cycles.balance()
+  };
+
+  public shared({caller}) func wallet_receive(): async Nat {
+    Cycles.accept(Cycles.available())
+  };
+
 };
